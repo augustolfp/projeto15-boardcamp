@@ -15,8 +15,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/games', async (req, res) => {
+    try {
+        const query = await connection.query('SELECT * FROM games');
+        return res.send(query.rows).status(200);
+    }
+    catch(error) {
+        return res.send(error).status(400);
+    }
+});
+
+
+
 const PORT = process.env.PORT || 4000;
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server is listening on ${PORT}`);
   });
