@@ -26,3 +26,19 @@ export async function insertRental(req, res) {
         return res.send(error);
     }
 }
+
+export async function returnRental(req, res) {
+    const id = parseInt(req.params.id);
+    const returnDate = dayjs().format('YYYY-MM-DD');
+
+    try {
+        const returningRental = await connection.query(`SELECT * FROM rentals WHERE id = $1`,[id]);
+        const rentDate = dayjs(returningRental.rows[0].rentDate).format('YYYY-MM-DD');
+        const lateDays = dayjs().diff(rentDate, 'day');
+        const query = await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3`,[returnDate,0,id]);
+        return res.sendStatus(200);
+    }
+    catch(error) {
+        return res.send(error);
+    }
+}
