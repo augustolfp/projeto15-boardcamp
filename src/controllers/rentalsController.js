@@ -42,3 +42,14 @@ export async function returnRental(req, res) {
         return res.send(error);
     }
 }
+
+export async function deleteRental(req, res) {
+    const id = parseInt(req.params.id);
+    try {
+        const query = await connection.query(`DELETE FROM rentals WHERE id = $1`,[id]);
+        res.sendStatus(200);
+    }
+    catch(error) {
+        res.send(error);
+    }
+}
