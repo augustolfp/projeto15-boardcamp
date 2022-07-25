@@ -17,6 +17,22 @@ export async function listCustomers(req, res) {
     }
 }
 
+export async function findCustomer(req, res) {
+    const id = req.params.id;
+    try {
+        const query = await connection.query(`SELECT * FROM customers WHERE id = $1 `,[id]);
+        
+        if(query.rows.length === 0) {
+            return res.sendStatus(404);
+        }
+
+        return res.send(query.rows).status(200);
+    }
+    catch(error) {
+        res.send(error).status(400);
+    }
+}
+
 export async function insertCustomer(req, res) {
     const {name, phone, cpf, birthday} = req.body;
     try {
