@@ -11,7 +11,7 @@ export async function listGames(req, res) {
 }
 
 export async function insertGame(req, res) {
-    const {name, image, stockTotal, categoryId, pricePerDay} = req.body;
+    const {name, image, stockTotal, categoryId, pricePerDay} = res.locals.game;
     try {
         const query = await connection.query('INSERT INTO games ("name","image","stockTotal","categoryId","pricePerDay") VALUES ($1, $2, $3, $4, $5)',[name, image, stockTotal, categoryId, pricePerDay]);
         return res.sendStatus(201);
