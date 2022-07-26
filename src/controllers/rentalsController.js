@@ -33,9 +33,12 @@ export async function returnRental(req, res) {
 
     try {
         const returningRental = await connection.query(`SELECT * FROM rentals WHERE id = $1`,[id]);
+        const game = await connection.query(`SELECT * FROM games WHERE id = $1`,[returningRental.rows[0].gameId]);
+        const pricePerDay = game.rows[0].pricePerDay;
         const rentDate = dayjs(returningRental.rows[0].rentDate).format('YYYY-MM-DD');
-        const lateDays = dayjs().diff(rentDate, 'day');
-        const query = await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3`,[returnDate,0,id]);
+        const lateDays = dayjs().diff(rentDate, 'day')-returningRental.rows[0].daysRented;
+        const delayFee = pricePerDay*lateDays;
+        const query = await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3`,[returnDate,delayFee,id]);
         return res.sendStatus(200);
     }
     catch(error) {
